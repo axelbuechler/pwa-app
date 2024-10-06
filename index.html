@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PWA App</title>
-    <script src="scanner.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PWA Scanner</title>
 </head>
 <body>
-    <h1>PWA Google Sheets Integration</h1>
-    <button id="sendTestBtn">Test-Daten senden</button>
+  <h1>Scanne den DataMatrix-Code</h1>
+  <button id="startScan">Scannen starten</button>
+  <button id="sendTestData">Testdaten senden</button>
+  <p id="scanResult"></p>
+
+  <script src="/scanner.js"></script>
 </body>
 </html>
+
