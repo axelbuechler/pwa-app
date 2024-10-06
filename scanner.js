@@ -3,7 +3,7 @@
 const WEB_APP_URL = '/api/google-script';
 
 // Funktion, um Test-Daten an die Vercel Function zu senden
-document.getElementById('sendTestBtn').addEventListener('click', function() {
+document.getElementById('sendTestData').addEventListener('click', function() {
   console.log("Test-Daten werden gesendet...");
 
   fetch(WEB_APP_URL, {
@@ -24,3 +24,4 @@ document.getElementById('sendTestBtn').addEventListener('click', function() {
     console.error('Fehler beim Senden:', error);
   });
 });
+
