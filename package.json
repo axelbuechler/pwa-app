@@ -1,0 +1,14 @@
+{
+  "name": "pwa-app",
+  "version": "1.0.0",
+  "main": "scanner.js",
+  "dependencies": {
+    "axios": "^0.21.1"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
