@@ -9,13 +9,17 @@
   <h1>Scanne den DataMatrix-Code</h1>
   <button id="startScan">Scannen starten</button>
   <button id="sendTestData">Testdaten senden</button>
-  
   <p id="scanResult"></p>
   
-  <!-- Kamera-Vorschau -->
-  <video id="video" width="300" height="200"></video>
+  <!-- Video-Element zum Anzeigen der Kamera -->
+  <video id="video" width="300" height="200" style="border: 1px solid black"></video>
 
+  <!-- ZXing Bibliothek per CDN einbinden -->
+  <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.6/umd/index.min.js"></script>
+
+  <!-- Skript für den Scanner -->
   <script src="/scanner.js"></script>
 </body>
 </html>
+
 
