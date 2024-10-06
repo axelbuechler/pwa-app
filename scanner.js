@@ -1,12 +1,9 @@
-import { BrowserMultiFormatReader } from '@zxing/library';
-
-const codeReader = new BrowserMultiFormatReader();
+const codeReader = new ZXing.BrowserMultiFormatReader();
 let selectedDeviceId;
 
-codeReader
-  .listVideoInputDevices()
+// Liste der Video-Eingabegeräte abrufen (Kameras)
+codeReader.listVideoInputDevices()
   .then(videoInputDevices => {
-    // Zeige verfügbare Kameras an
     const sourceSelect = document.createElement('select');
     sourceSelect.id = 'sourceSelect';
     videoInputDevices.forEach(device =>
@@ -25,14 +22,14 @@ codeReader
             console.log(result.text);
             document.getElementById('scanResult').textContent = result.text;
 
-            // Sende die gescannten Daten an den Server
+            // Test-Daten an die Vercel Function senden
             fetch('/api/google-script', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                sheetName: 'Test', // Dein Tabellenname
+                sheetName: 'Test', 
                 values: [[new Date().toISOString(), result.text]],
               }),
             })
@@ -53,4 +50,28 @@ codeReader
     });
   })
   .catch(err => console.error(err));
+
+// Funktion, um Test-Daten an die Google Sheets zu senden
+document.getElementById('sendTestData').addEventListener('click', function() {
+  console.log("Test-Daten werden gesendet...");
+
+  fetch('/api/google-script', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      sheetName: 'Test', 
+      values: [["Testdatum", "Testcode"]] 
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Antwort von Google Apps Script:', data);
+  })
+  .catch(error => {
+    console.error('Fehler beim Senden:', error);
+  });
+});
+
 
