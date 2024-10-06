@@ -9,7 +9,6 @@ export default async function handler(req, res) {
         sheetName: req.body.sheetName,
         values: req.body.values
       });
-
       res.status(200).json(response.data);
     } catch (error) {
       console.error('Fehler beim Weiterleiten:', error);
@@ -20,3 +19,4 @@ export default async function handler(req, res) {
     res.status(405).end(`Methode ${req.method} nicht erlaubt`);
   }
 }
+
