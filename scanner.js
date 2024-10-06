@@ -1,56 +1,56 @@
 import { BrowserMultiFormatReader } from '@zxing/library';
 
 const codeReader = new BrowserMultiFormatReader();
-const WEB_APP_URL = '/api/google-script';
+let selectedDeviceId;
 
-document.getElementById('startScan').addEventListener('click', () => {
-  // Kamera initialisieren
-  codeReader.decodeFromInputVideoDevice(undefined, 'video')
-    .then(result => {
-      console.log(result.text);
-      document.getElementById('scanResult').textContent = `Gescanntes Ergebnis: ${result.text}`;
-      
-      // Gescannten DataMatrix-Code an Google Sheet senden
-      fetch(WEB_APP_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          sheetName: 'Test',
-          values: [[new Date().toISOString(), result.text]]
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Antwort von Google Apps Script:', data);
-      })
-      .catch(error => {
-        console.error('Fehler beim Senden:', error);
-      });
-    })
-    .catch(err => console.error('Fehler beim Scannen', err));
-});
+codeReader
+  .listVideoInputDevices()
+  .then(videoInputDevices => {
+    // Zeige verfügbare Kameras an
+    const sourceSelect = document.createElement('select');
+    sourceSelect.id = 'sourceSelect';
+    videoInputDevices.forEach(device =>
+      sourceSelect.appendChild(new Option(device.label, device.deviceId))
+    );
+    document.body.appendChild(sourceSelect);
 
-// Testdaten senden (bereits funktional)
-document.getElementById('sendTestData').addEventListener('click', function() {
-  console.log("Test-Daten werden gesendet...");
+    sourceSelect.onchange = () => {
+      selectedDeviceId = sourceSelect.value;
+    };
 
-  fetch(WEB_APP_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      sheetName: 'Test', // Dein Tabellenname
-      values: [["Testdatum", "Testcode"]] // Beispiel-Testdaten
-    })
+    document.getElementById('startScan').addEventListener('click', () => {
+      if (selectedDeviceId) {
+        codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
+          if (result) {
+            console.log(result.text);
+            document.getElementById('scanResult').textContent = result.text;
+
+            // Sende die gescannten Daten an den Server
+            fetch('/api/google-script', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                sheetName: 'Test', // Dein Tabellenname
+                values: [[new Date().toISOString(), result.text]],
+              }),
+            })
+              .then(response => response.json())
+              .then(data => {
+                console.log('Antwort von Google Apps Script:', data);
+              })
+              .catch(error => {
+                console.error('Fehler beim Senden:', error);
+              });
+          }
+
+          if (err && !(err instanceof ZXing.NotFoundException)) {
+            console.error(err);
+          }
+        });
+      }
+    });
   })
-  .then(response => response.json())
-  .then(data => {
-    console.log('Antwort von Google Apps Script:', data);
-  })
-  .catch(error => {
-    console.error('Fehler beim Senden:', error);
-  });
-});
+  .catch(err => console.error(err));
+
