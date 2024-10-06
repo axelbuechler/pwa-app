@@ -1,23 +1,24 @@
+// scanner.js
+
+const WEB_APP_URL = '/api/google-script';
+
+// Funktion, um Test-Daten an die Vercel Function zu senden
 document.getElementById('sendTestBtn').addEventListener('click', function() {
   console.log("Test-Daten werden gesendet...");
 
-  fetch('https://script.google.com/macros/s/AKfycbySRoJ18euew2zqOL3nOWqGInzOkDxL7kw5Oi32-pqU7T8r56nf_HL-hdjUq1cXAMMA1w/exec?action=appendData&sheetName=Test', {
+  fetch(WEB_APP_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      values: [["Testdatum", "Testcode"]]
+      sheetName: 'Test', // Dein Tabellenname
+      values: [["Testdatum", "Testcode"]] // Beispiel-Testdaten
     })
   })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`Fehler beim Senden: ${response.statusText}`);
-    }
-    return response.json();
-  })
+  .then(response => response.json())
   .then(data => {
-    alert('Test-Daten erfolgreich gesendet.');
+    console.log('Antwort von Google Apps Script:', data);
   })
   .catch(error => {
     console.error('Fehler beim Senden:', error);
